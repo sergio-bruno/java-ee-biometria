@@ -1,0 +1,81 @@
+<ui:composition template="/WEB-INF/template/LayoutPadrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="titulo">Atualizar Biometria</ui:define>
+
+	<ui:define name="corpo">
+		<h:form>
+			<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true"/>
+			
+			<p:toolbar style="margin-top: 45px">
+				<p:toolbarGroup>
+					<p:button value="Nova Coleta"
+						outcome="/beneficiario/CadastroBiometria" />
+					<p:commandButton value="Salvar" id="botaoSalvar" action="#{biometriaBean.forcaErroNegocioSemLog4j}" update="growl"/>
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisa"
+						outcome="/beneficiario/PesquisaBiometria" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+			<p:panelGrid columns="6" id="painel"
+				style="width: 100%; margin-top: 20px" columnClasses="rotulo, campo">
+				<p:outputLabel value="Matrícula" for="nr_matricula" />
+				<p:inputText id="nr_matricula" size="10" maxlength="20" required="true"/>
+
+				<p:outputLabel value="DV" for="nr_digito" />
+				<p:inputText id="nr_digito" size="5" maxlength="1" />
+
+				<p:outputLabel value="Nome" for="nmPessoa" />
+				<p:inputText id="nmPessoa" size="60" maxlength="200"
+					value="#{biometriaBean.nmPessoa}" />
+			</p:panelGrid>
+
+			<h1>Coleta de foto</h1>
+
+			<h:panelGrid columns="3" cellpadding="5">
+				<p:photoCam widgetVar="pc" listener="#{biometriaBean.oncapture}"
+					update="photo" />
+				<p:commandButton type="button" value="Coletar"
+					onclick="PF('pc').capture()" update="@form" />
+				<p:outputPanel id="photo">
+					<p:graphicImage
+						name="demo/images/photocam/#{biometriaBean.filename}.jpeg"
+						rendered="#{not empty biometriaBean.filename}" />
+				</p:outputPanel>
+			</h:panelGrid>
+
+			<h1>Coleta de biometria</h1>
+
+			<h:panelGrid columns="6" cellpadding="3">
+				<p:outputPanel id="fotoDedos">
+					<p:graphicImage name="imagens/maos.jpeg" />
+				</p:outputPanel>
+
+				<p:outputLabel value="Dedo a ser coletado" for="dedoSelecionado" />
+				<p:selectOneListbox id="dedoSelecionado"
+					value="#{biometriaBean.dedoSelecionado}" required="true">
+					<f:selectItem itemLabel="1 - Mínimo (E)" itemValue="1" />
+					<f:selectItem itemLabel="2 - Anelar (E)" itemValue="2" />
+					<f:selectItem itemLabel="3 - Médio (E)" itemValue="3" />
+					<f:selectItem itemLabel="4 - Indicador (E)" itemValue="4" />
+					<f:selectItem itemLabel="5 - Polegar (E)" itemValue="5" />
+					<f:selectItem itemLabel="6 - Polegar (D)" itemValue="6" />
+					<f:selectItem itemLabel="7 - Indicador (D)" itemValue="7" />
+					<f:selectItem itemLabel="8 - Médio (D)" itemValue="8" />
+					<f:selectItem itemLabel="9 - Anelar (D)" itemValue="9" />
+					<f:selectItem itemLabel="10 - Mínimo (D)" itemValue="10" />
+				</p:selectOneListbox>
+
+				<p:commandButton value="Coletar" action="#{biometriaBean.atualizar}" update="nr_matricula dedoSelecionado growl"/>
+
+			</h:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
